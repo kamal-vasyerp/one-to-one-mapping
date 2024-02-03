@@ -56,25 +56,23 @@ public class PersonServiceImp implements PersonService {
 			existingPerson.setEmail(person.getEmail());
 		}
 		if((person.getAge() + "").length() != 0 ) {
-			if(person.getAge() >= 18 )
 				existingPerson.setAge(person.getAge());
-			else
-				return "Age must be greater then 18";
 		}
 		
 		if((account.getAccountId() + "").length() != 10) {
 			return "Account Id must be of Length 10";
 		}
 		else {
-			existingPerson.setAccount(person.getAccount());
+			existingPerson.setAccount(account);
 		}
-		return "Person Saved";
+		
+		personRepository.save(existingPerson);
+		return "Person Updated";
 	}
 
 	@Override
 	public String deletePerson(long personId) {
-		Person toDeletePerson = new Person();
-		personRepository.delete(toDeletePerson);
+		personRepository.deleteById(personId);
 		return "Person Deleted";
 	}
 
