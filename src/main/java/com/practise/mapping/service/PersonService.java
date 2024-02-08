@@ -14,7 +14,7 @@ public interface PersonService {
 	public String savePerson(Person person);
 	public String updatePerson(Person person);
 	public String deletePerson(long personId);
-	public ResponseEntity<String> uploadPerson(MultipartFile file);
-	public ResponseEntity<String> addDetails(String file , Long personId);	
+	public String uploadPerson(MultipartFile file);
+	public String addDetails(String file , Long personId);	
 	public ResponseEntity<Object> downloadFile(String file);
 }

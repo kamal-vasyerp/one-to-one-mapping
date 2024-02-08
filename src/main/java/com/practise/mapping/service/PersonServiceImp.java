@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.practise.mapping.exception.PersonNotFoundException;
 import com.practise.mapping.model.Account;
 import com.practise.mapping.model.Person;
 import com.practise.mapping.repository.PersonRepository;
@@ -38,7 +39,7 @@ public class PersonServiceImp implements PersonService {
 	@Override
 	public Person showPerson(long personId) {
 		Person person = new Person();
-		person = personRepository.findById(personId).orElse(null);
+		person = personRepository.findById(personId).orElseThrow(() -> new PersonNotFoundException("Person not Found"));
 		return person;
 	}
 
@@ -53,7 +54,7 @@ public class PersonServiceImp implements PersonService {
 		Person existingPerson = new Person();
 		Account account = person.getAccount();
 		existingPerson = personRepository.findById(person.getPersonId())
-				.orElseThrow(() -> new EntityNotFoundException("Person Does not Exist in Database"));
+				.orElseThrow(() -> new PersonNotFoundException("Person Does not Exist in Database"));
 
 		if (person.getName() != null) {
 			existingPerson.setName(person.getName());
@@ -85,7 +86,10 @@ public class PersonServiceImp implements PersonService {
 	}
 
 	@Override
-	public ResponseEntity<String> uploadPerson(MultipartFile file) {
+	public String uploadPerson(MultipartFile file) {
+
+		String response = new String();
+
 		try {
 			File directory = new File(UPLOAD_URL);
 			if (!directory.exists()) {
@@ -97,14 +101,16 @@ public class PersonServiceImp implements PersonService {
 
 			Files.write(filePath, file.getBytes(), StandardOpenOption.CREATE);
 
-			return ResponseEntity.ok("File Uploaded.");
+			response = "File Uploaded.";
 		} catch (IOException ex) {
-			return ResponseEntity.status(500).body("File not Uploaded : " + ex.getMessage());
+			response = "File not Uploaded : " + ex.toString();
 		}
+		return response;
 	}
 
 	@Override
-	public ResponseEntity<String> addDetails(String file, Long personId) {
+	public String addDetails(String file, Long personId) {
+		String message = new String();
 		try {
 			String fileName = file + ".txt";
 			Path filePath = Paths.get(UPLOAD_URL).resolve(fileName).normalize();
@@ -116,11 +122,12 @@ public class PersonServiceImp implements PersonService {
 			String name = person.getName();
 
 			Files.write(filePath, name.getBytes(), StandardOpenOption.APPEND);
+			message = "File Updated";
 		} catch (IOException ex) {
-			return ResponseEntity.status(500).body("File did not Updated: " + ex.getMessage());
+			message = "File did not Updated: " + ex.getMessage();
 		}
 
-		return ResponseEntity.ok("File Updated");
+		return message;
 	}
 
 	@Override

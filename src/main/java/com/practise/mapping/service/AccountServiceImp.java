@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.practise.mapping.exception.AccountNotFoundException;
 import com.practise.mapping.model.Account;
 import com.practise.mapping.repository.AccountRepository;
 
@@ -17,9 +18,9 @@ public class AccountServiceImp implements AccountService{
 	private AccountRepository accountRepository;
 
 	@Override
-	public List<Account> showAccounts() {
-		return accountRepository.findAll();
-	}
+		public List<Account> showAccounts(){
+				return accountRepository.findAll();
+		}
 
 	@Override
 	public Account showAccount(long accountId) {
@@ -35,7 +36,7 @@ public class AccountServiceImp implements AccountService{
 	}
 
 	@Override
-	public String deleteAccount(long accountId) {
+	public String deleteAccount(long accountId) throws AccountNotFoundException {
 		accountRepository.deleteById(accountId);
 		return "Account Deleted";
 	}
